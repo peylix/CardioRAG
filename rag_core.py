@@ -1,7 +1,7 @@
 # LangChain 接入Yuan模型
 from modelscope import snapshot_download
 from langchain_community.document_loaders import TextLoader
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 # 调用模型
 from LLM import Yuan2_LLM
@@ -9,11 +9,10 @@ from sentence_transformers import SentenceTransformer
 # 向量化
 from transformers.utils import is_torch_cuda_available, is_torch_mps_available
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.prompts import ChatPromptTemplate
-from langchain.output_parsers import StrOutputParser
 
 
 def get_model():
