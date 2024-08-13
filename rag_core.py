@@ -20,8 +20,9 @@ def get_model():
     llm = Yuan2_LLM('model/autodl-fs/IEITYuan/Yuan2-2B-Mars-hf')
     return llm
 
+
 def get_docs(directory):
-    loader = TextLoader(directory)
+    loader = PyPDFLoader(directory)
     documents = loader.load()
 
     # 文档分割
@@ -44,7 +45,6 @@ def preprocess(docs):
     model = SentenceTransformer(model_name)
     model.save('model\\m3e-base')
 
-
     # 词嵌入模型
     EMBEDDING_DEVICE = "cuda" if is_torch_cuda_available() else "mps" if is_torch_mps_available() else "cpu"
     embeddings_model = HuggingFaceEmbeddings(
@@ -60,8 +60,8 @@ def preprocess(docs):
 def get_metadata(vectorstore):
     return vectorstore.docstore._dict.values()
 
-def retrieve_docs(query, vectorstore):
 
+def retrieve_docs(query, vectorstore):
     # 向量查询
     query = '东方健康膳食模式'
     docs = vectorstore.similarity_search(query)
