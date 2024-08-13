@@ -26,7 +26,12 @@ def get_docs(directory):
     documents = loader.load()
 
     # 文档分割
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200,length_function=len)
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200,
+        length_function=len
+    )
+    
     docs = text_splitter.split_documents(documents)
 
     return docs
@@ -43,7 +48,10 @@ def preprocess(docs):
 
     # 词嵌入模型
     EMBEDDING_DEVICE = "cuda" if is_torch_cuda_available() else "mps" if is_torch_mps_available() else "cpu"
-    embeddings_model = HuggingFaceEmbeddings(model_name='model\m3e-base', model_kwargs={'device': 'cpu'})
+    embeddings_model = HuggingFaceEmbeddings(
+        model_name='model\m3e-base', 
+        model_kwargs={'device': EMBEDDING_DEVICE}
+    )
 
     vectorstore = FAISS.from_documents(documents=docs, embedding=embeddings_model)
 
