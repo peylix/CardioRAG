@@ -1,3 +1,5 @@
+import os
+
 # LangChain 接入Yuan模型
 from modelscope import snapshot_download
 from langchain_community.document_loaders import TextLoader
@@ -38,8 +40,23 @@ def get_docs(directory):
 
 
 def preprocess(docs):
-    # 指定模型名称
+    # 加载模型
     model_name = "moka-ai/m3e-base"
+    local_model_dir = "/mnt/workspace/m3e-base"
+
+    # 首先尝试从 Hugging Face 加载模型，如果失败则从本地加载
+    try:
+        print("********** Trying to load the mode from Hugging Face **********")
+        model = SentenceTransformer(model_name)
+        model.save('model\\m3e-base')
+    except Exception as e:
+        if os.path.exists(local_model_dir):
+            print("********** Alas, failed to load the model from Hugging Face **********")
+            print("********** Loading the model from local directory **********")
+            model = SentenceTransformer(local_model_dir)
+            model = SentenceTransformer(local_model_dir)
+        else:
+            raise e
 
     # 创建模型实例并将模型保存到指定路径
     model = SentenceTransformer(model_name)
