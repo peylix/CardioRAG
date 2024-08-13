@@ -22,6 +22,7 @@ if "messages" not in st.session_state:
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
+
 if prompt := st.chat_input():
     if False:
         st.info("出现了一些错误，请稍后再试。")
@@ -32,8 +33,9 @@ if prompt := st.chat_input():
             "role": "user",
             "content": prompt
         }
+    
     )
-    st.chat_message("您").write(prompt)
+    st.chat_message("user").write(prompt)
     response, ret_docs = get_llm_response(prompt)
 
     msg = response
@@ -44,7 +46,7 @@ if prompt := st.chat_input():
         }
     )
 
-    st.chat_message(msg["role"]).write(msg)
+    st.chat_message("assistant").write(msg)
 
     st.markdown("##### 🔍 相关文档")
     for doc in ret_docs:
