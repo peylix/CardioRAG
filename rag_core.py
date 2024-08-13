@@ -31,7 +31,7 @@ def get_docs(directory):
         chunk_overlap=200,
         length_function=len
     )
-    
+
     docs = text_splitter.split_documents(documents)
 
     return docs
@@ -99,18 +99,9 @@ def get_llm_response(question):
 
     return parsed_response, docs
 
-# system_template = "你是一名资深的医生，对于高血压有很深的经验"
-# human_template = "请根据以下文档回答我的问题：\n\n{docs}\n\n问题：{question}"
 
-# prompt = ChatPromptTemplate.from_messages([
-#         ("system", system_template),
-#         ("human" , human_template)
-#     ])
-
-# output_parser = StrOutputParser()
-
-# chain = prompt | llm | output_parser
-# question = "高血压患者应该怎么饮食？"
-# docs = retriever.get_relevant_documents(question)
-
-# chain.invoke({"question": question, "docs": docs})
+if __name__ == "__main__":
+    question = "东方健康膳食模式"
+    response, docs = get_llm_response(question)
+    print(response)
+    print(docs)
