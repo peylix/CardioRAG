@@ -6,6 +6,8 @@ with st.sidebar:
     "🤖 该项目由 CardioRAG 设计并开发"
     "❤️ 我们衷心希望您身心健康"
     "🧑‍💻 [查看项目源代码](https://github.com/peylix/CardioRAG)"
+    ""
+    "*请注意，本应用不能完全代替专业医师*"
 
 st.title("知心智医 🧑‍⚕️")
 
@@ -42,4 +44,10 @@ if prompt := st.chat_input():
         }
     )
 
-    st.chat_message("智医").write(msg)
+    st.chat_message(msg["role"]).write(msg)
+
+    st.markdown("##### 🔍 相关文档")
+    for doc in ret_docs:
+        with st.expander(doc.metadata.get("source", "文档")):
+            st.markdown(f"**页面编号:** {doc.metadata.get('page', '未知')}")
+            st.markdown(f"**内容预览:**\n\n{doc.page_content[:500]}...")
