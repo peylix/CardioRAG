@@ -33,8 +33,8 @@ if prompt := st.chat_input():
             "role": "user",
             "content": prompt
         }
-    
     )
+
     st.chat_message("user").write(prompt)
     response, ret_docs = get_llm_response(prompt)
 

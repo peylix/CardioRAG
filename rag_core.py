@@ -86,14 +86,9 @@ def get_metadata(vectorstore):
 
 
 def retrieve_docs(query, vectorstore):
-    # 向量查询
-    query = '东方健康膳食模式'
-    docs = vectorstore.similarity_search(query)
-    print(docs[0].page_content)
-
     #向量检索
     retriever = vectorstore.as_retriever()
-    docs = retriever.get_relevant_documents("东方健康膳食模式")
+    docs = retriever.get_relevant_documents(query)
     
     return retriever, docs
 
