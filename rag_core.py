@@ -16,7 +16,6 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.prompts import ChatPromptTemplate
 
-
 def get_model():
     model_dir = snapshot_download('IEITYuan/Yuan2-2B-Mars-hf', cache_dir='./model/autodl-fs')
     llm = Yuan2_LLM('model/autodl-fs/IEITYuan/Yuan2-2B-Mars-hf')
@@ -59,18 +58,26 @@ def preprocess(docs):
     #         raise e
 
     # 创建模型实例并将模型保存到指定路径
-    model = SentenceTransformer(local_model_dir)
-    model.save('model\\m3e-base')
+    # model = SentenceTransformer(local_model_dir)
+    # model.save('model\\m3e-base')
 
-    # 词嵌入模型
+    #词嵌入模型
     EMBEDDING_DEVICE = "cuda" if is_torch_cuda_available() else "mps" if is_torch_mps_available() else "cpu"
     embeddings_model = HuggingFaceEmbeddings(
-        model_name='model\m3e-base', 
-        model_kwargs={'device': EMBEDDING_DEVICE}
+         model_name='model\m3e-base', 
+         model_kwargs={'device': EMBEDDING_DEVICE}
     )
 
-    vectorstore = FAISS.from_documents(documents=docs, embedding=embeddings_model)
+    # vectorstore = FAISS.from_documents(documents=docs, embedding=embeddings_model)
 
+    """
+    直接从文件内存中加载向量数据库
+    """
+    # 指定保存的路径
+    save_path = "./faiss_index"
+
+    # 加载向量数据库
+    vectorstore = FAISS.load_local(save_path, embeddings_model, allow_dangerous_deserialization=True)
     return vectorstore
 
 
