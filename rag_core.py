@@ -1,4 +1,6 @@
 import os
+import jieba
+import json
 
 # LangChain 接入Yuan模型
 from modelscope import snapshot_download
@@ -85,6 +87,27 @@ def get_metadata(vectorstore):
     return vectorstore.docstore._dict.values()
 
 
+def expand_query(query, synonym_dict):
+    words = jieba.lcut(query)
+    expanded_query = []
+    for word in words:
+        if word in synonym_dict:
+            expanded_query.extend(synonym_dict[word])
+        else:
+            expanded_query.append(word)
+    return " ".join(expanded_query)
+
+
+def reverse_query_expansion(query, synonym_dict):
+    words = jieba.lcut(query)
+    result = []
+    for word in words:
+        normalized_word = synonym_dict.get(word, word)
+        result.append(normalized_word)
+    return "".join(result)
+
+
+
 def retrieve_docs(query, vectorstore):
     #向量检索
     retriever = vectorstore.as_retriever()
@@ -95,8 +118,15 @@ def retrieve_docs(query, vectorstore):
 
 def get_llm_response(question):
     unprocessed_docs = get_docs("demo_docs/demo.pdf") # TODO: Change to a more general form
-    vectorstore = preprocess(unprocessed_docs)
+    vectorstore = preprocess(unprocessed_docs) # TODO: 预加载向量数据库
     llm = get_model()
+
+    
+    # TODO 在完善同义词词典后取消注释
+    # with open("synonym_dict.json", "r", encoding="utf-8") as f:
+    #     synonym_dict = json.load(f)
+    # processed_query = reverse_query_expansion(question, synonym_dict)
+
     retriever, docs = retrieve_docs(question, vectorstore)
 
     system_template = "你是一名资深的医生，对于高血压有极为丰富的经验。"
