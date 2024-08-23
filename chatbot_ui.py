@@ -1,8 +1,9 @@
 import streamlit as st
-from rag_core import get_llm_response
+# from rag_core import get_llm_response
 from logging_save import LoggingSave
 
 with st.sidebar:
+    st.image("cardiorag-logo-without-background.png", use_column_width=True)
     "🤖 该项目由 CardioRAG 设计并开发"
     "❤️ 我们衷心希望您身心健康"
     "🧑‍💻 [查看项目源代码](https://github.com/peylix/CardioRAG)"
@@ -36,7 +37,8 @@ if prompt := st.chat_input():
     )
 
     st.chat_message("user").write(prompt)
-    response, ret_docs = get_llm_response(prompt)
+    # response, ret_docs = get_llm_response(prompt)
+    response, ret_docs = "Fake Answer", ["Fake Document 1", "Fake Document 2"]
 
     msg = response
     st.session_state.messages.append(

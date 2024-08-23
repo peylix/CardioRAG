@@ -1,4 +1,4 @@
-<div align="center" id="madewithlua">
+<div align="center" id="cardio-rag-logo">
   <img
     src="https://github.com/peylix/CardioRAG/blob/main/cardiorag-logo-without-background.png"
     width="135"
