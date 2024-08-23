@@ -1,8 +1,8 @@
 <div align="center" id="madewithlua">
   <img
-    src="https://github.com/peylix/CardioRAG/blob/main/cardiorag-logo.png"
-    width="125"
-    height="125"
+    src="https://github.com/peylix/CardioRAG/blob/main/cardiorag-logo-without-background.png"
+    width="135"
+    height="135"
   />
 </div>
 <h1 align="center">知心智医 CardioRAG</h1>
