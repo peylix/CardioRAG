@@ -26,7 +26,7 @@ class Yuan2_LLM(LLM):
 
         prompt += "<sep>"
         inputs = self.tokenizer(prompt, return_tensors="pt")["input_ids"].cuda()
-        outputs = self.model.generate(inputs,do_sample=False,max_length=4000)
+        outputs = self.model.generate(inputs,do_sample=False,max_new_tokens=1000)#max_length=4000
         output = self.tokenizer.decode(outputs[0])
         response = output.split("<sep>")[-1]
 
