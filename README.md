@@ -1,4 +1,11 @@
-# 知心智医 CardioRAG
+<div align="center" id="madewithlua">
+  <img
+    src="https://github.com/peylix/CardioRAG/blob/main/cardiorag-logo.png"
+    width="125"
+    height="125"
+  />
+</div>
+<h1 align="center">知心智医 CardioRAG</h1>
 
 ## 项目背景
 近年来，心血管疾病的发病率不断上升，医疗资源的有限性使人民群众的看病压力逐年增加。由于缺乏相关专业知识，患者对于疾病和检查报告、用药以及不同医院专精科室的认识不足，从而对疾病的治疗产生影响。
@@ -14,7 +21,7 @@
     git clone https://github.com/peylix/CardioRAG.git
     ```
 
-2. 安装所有要求文件
+2. 安装依赖
 
     ```shell
     pip install -r requirements.txt
