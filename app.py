@@ -1,6 +1,7 @@
 import streamlit as st
 # from langchain_openai import ChatOpenAI
 import os
+import re
 from LLM import Yuan2_LLM
 from langchain_core.output_parsers import StrOutputParser
 from langchain.prompts import PromptTemplate
@@ -18,6 +19,44 @@ _ = load_dotenv(find_dotenv())    # read local .env file
 #export OPENAI_API_KEY=
 #os.environ["OPENAI_API_BASE"] = 'https://api.chatgptid.net/v1'
 zhipuai_api_key = os.environ['ZHIPUAI_API_KEY']
+def has_more_than_one_chinese_question_mark(s):
+    # 匹配中文问号
+    pattern = r'？'
+    # 查找所有匹配的中文问号
+    matches = re.findall(pattern, s)
+    # 判断匹配的数量是否大于1
+    return len(matches) > 1
+
+def clean_text(text):
+    # 移除非文字内容
+    cleaned_text = re.sub(r'\[图\d+\]', '', text)  # 移除形如 [图1] 的内容
+    cleaned_text = re.sub(r'\[图\s*\d+\]', '', cleaned_text)  # 移除形如 [ 图 1 ] 的内容
+    cleaned_text = re.sub(r'\[图\s*\d+\s*-\s*\d+\]', '', cleaned_text)  # 移除形如 [ 图 1 - 2 ] 的内容
+    cleaned_text = re.sub(r'\[图\s*\d+\s*\.\s*\d+\]', '', cleaned_text)  # 移除形如 [ 图 1 . 2 ] 的内容
+    cleaned_text = re.sub(r'\[参考图\s*\d+\]', '', cleaned_text)  # 移除形如 [题1] 的内容
+    cleaned_text = re.sub(r'\[参考图\s*\d+\s*-\s*\d+\]', '', cleaned_text)  # 移除形如 [题1-2] 的内容
+    cleaned_text = re.sub(r'\[参考图\s*\d+\s*\.\s*\d+\]', '', cleaned_text)  # 移除形如 [题1.2] 的内容
+    cleaned_text = re.sub(r'\[表\s*\d+\]', '', cleaned_text)  # 移除形如 [题1] 的内容
+    cleaned_text = re.sub(r'\[表\s*\d+\s*-\s*\d+\]', '', cleaned_text)  # 移除形如 [题1-2] 的内容
+    cleaned_text = re.sub(r'\[表\s*\d+\s*\.\s*\d+\]', '', cleaned_text)  # 移除形如 [题1.2] 的内容
+    cleaned_text = re.sub(r'\[见表\s*\d+\]', '', cleaned_text)  # 移除形如 [题1] 的内容
+    cleaned_text = re.sub(r'\[见表\s*\d+\s*-\s*\d+\]', '', cleaned_text)  # 移除形如 [题1-2] 的内容
+    cleaned_text = re.sub(r'\[见表\s*\d+\s*\.\s*\d+\]', '', cleaned_text)  # 移除形如 [题1.2] 的内容
+    cleaned_text = re.sub(r'\[\d+\]', '', cleaned_text)  # 移除形如 [1] 的内容
+    cleaned_text = re.sub(r'\[\d+\s*\-\s*\d+\]', '', cleaned_text)  # 移除形如 [1-2] 的内容
+    cleaned_text = re.sub(r'\[\d+\s*\.\s*\d+\]', '', cleaned_text)  # 移除形如 [1.2] 的内容
+    cleaned_text = re.sub(r'\[\d+\s*\.\s*\d+\.\d+\]', '', cleaned_text)  # 移除形如 [1.2] 的内容
+    cleaned_text = re.sub(r'\[\·]', '', cleaned_text)  # 移除形如 [1.2] 的内容
+    cleaned_text = re.sub(r'\[\·\s*\·]', '', cleaned_text)  # 移除形如 [1.2] 的内容
+    
+    # cleaned_text = re.sub(r'\[.*?\]', '', cleaned_text)  # 移除所有括号内的内容
+    cleaned_text = re.sub(r'\s+', ' ', cleaned_text)  # 移除多余的空格
+
+    # 检查是否全为非中文字符
+    if re.match(r'^[^\u4e00-\u9fff]*$', cleaned_text):
+        cleaned_text = "请保重身体！"
+    
+    return cleaned_text
 
 def get_first_part(text):
     truncated_text = text[:20]
@@ -42,7 +81,7 @@ def generate_response(input_text):
 def generate_rag(question:str):
     vectordb = get_vectordb()
     docs = vectordb.max_marginal_relevance_search(question,k=3)
-    str="\n".join([i.page_content for i in docs])
+    str="\n".join([clean_text(i.page_content) for i in docs])
     if str:
         return str
     return "抱歉，暂时未找到！"
@@ -99,9 +138,10 @@ def get_qa_chain(question:str):
     # print(type(result["result"]))
     # print(len(result["result"]))
     # print('#'*60)
-    if len(result["result"])<=200:
+    flag=has_more_than_one_chinese_question_mark(result["result"])
+    if len(result["result"]) < 500 and not flag:
         return result["result"]
-    elif len(result["result"]) > 200 and len(result["result"]) < 500 :
+    elif flag and len(result["result"]) < 500 :
         return "你是想问？\n\n"+result["result"]
     else:
         result = get_first_part(result["result"])
